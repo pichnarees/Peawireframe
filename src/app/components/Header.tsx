@@ -1,7 +1,6 @@
 import svgPaths from "../../imports/ProcumentCritiriaConfigurationPlanCreationConfigurationStep1Default/svg-at4t87si4m";
 import { imgVector } from "../../imports/ProcumentCritiriaConfigurationPlanCreationConfigurationStep1Default/svg-jbqev";
 import type { Page } from "./Sidebar";
-import { useFidelity } from "../contexts/FidelityContext";
 
 export default function Header({
   _title,
@@ -12,55 +11,15 @@ export default function Header({
   onNavigate: (p: Page) => void;
   _title?: string;
 }) {
-  const { mode, toggleMode } = useFidelity();
-
   return (
     <header
-      className="shrink-0 flex items-center justify-between px-8"
+      className="shrink-0 flex items-center justify-end px-8"
       style={{
         height: 64,
         background: "#ffffff",
         borderBottom: "1px solid #eaecf0",
       }}
     >
-      {/* Fidelity Toggle Button */}
-      <button
-        onClick={toggleMode}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg transition-all"
-        style={{
-          background: mode === "high" ? "#f9fafb" : "#6b7280",
-          border: "1px solid #d1d5db",
-          color: mode === "high" ? "#374151" : "#ffffff",
-        }}
-      >
-        <svg
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          {mode === "high" ? (
-            <path
-              d="M3 3H17V17H3V3Z"
-              stroke="currentColor"
-              strokeWidth="2"
-              fill="none"
-            />
-          ) : (
-            <>
-              <rect x="3" y="3" width="6" height="4" stroke="currentColor" strokeWidth="1.5" fill="none" />
-              <rect x="11" y="3" width="6" height="4" stroke="currentColor" strokeWidth="1.5" fill="none" />
-              <rect x="3" y="9" width="14" height="3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-              <rect x="3" y="14" width="8" height="3" stroke="currentColor" strokeWidth="1.5" fill="none" />
-            </>
-          )}
-        </svg>
-        <span style={{ fontSize: "14px", fontWeight: 500 }}>
-          {mode === "high" ? "Hi-Fi" : "Mid-Fi"}
-        </span>
-      </button>
-
       {/* Right icons — exact from Figma */}
       <div className="flex items-center">
         {/* Sun / light mode */}

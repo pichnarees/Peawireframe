@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Search, Filter, ChevronRight, FileText, Clock, CheckCircle2, XCircle, AlertTriangle, RotateCcw, ArrowUpRight } from "lucide-react";
 import type { Page } from "../components/Sidebar";
-import MidFiPlaceholder, { MidFiStatCard, MidFiTable } from "../components/MidFiPlaceholder";
-import { useFidelity } from "../contexts/FidelityContext";
 
 const C = {
   primary: "#334155", border: "#e2e8f0", bg: "#f8fafc", surface: "#ffffff",
@@ -65,7 +63,6 @@ function StatCard({ label, value, color, border }: { label: string; value: numbe
 }
 
 export default function AllRequests({ onNavigate }: { onNavigate: (p: Page) => void }) {
-  const { mode } = useFidelity();
   const [search, setSearch]         = useState("");
   const [filterType, setFilterType] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -91,23 +88,11 @@ export default function AllRequests({ onNavigate }: { onNavigate: (p: Page) => v
 
       {/* Stat cards */}
       <div className="grid grid-cols-5 gap-4">
-        {mode === "mid" ? (
-          <>
-            <MidFiStatCard label="คำขอทั้งหมด" value={counts.total} />
-            <MidFiStatCard label="ทดแทนรถเดิม" value={REQUESTS.filter(r => r.type === "replacement").length} />
-            <MidFiStatCard label="โควต้าพื้นฐาน" value={REQUESTS.filter(r => r.type === "quota").length} />
-            <MidFiStatCard label="กรณีพิเศษ" value={REQUESTS.filter(r => r.type === "special").length} />
-            <MidFiStatCard label="รออนุมัติ" value={counts.pending} />
-          </>
-        ) : (
-          <>
-            <StatCard label="คำขอทั้งหมด"    value={counts.total}   color={C.text}    border={C.border} />
-            <StatCard label="ทดแทนรถเดิม"    value={REQUESTS.filter(r => r.type === "replacement").length} color="#1d4ed8" border="#bfdbfe" />
-            <StatCard label="โควต้าพื้นฐาน"  value={REQUESTS.filter(r => r.type === "quota").length}       color="#15803d" border="#86efac" />
-            <StatCard label="กรณีพิเศษ"       value={REQUESTS.filter(r => r.type === "special").length}     color="#6d28d9" border="#c4b5fd" />
-            <StatCard label="รออนุมัติ"       value={counts.pending} color={C.warning} border="#fcd34d" />
-          </>
-        )}
+        <StatCard label="คำขอทั้งหมด"    value={counts.total}   color={C.text}    border={C.border} />
+        <StatCard label="ทดแทนรถเดิม"    value={REQUESTS.filter(r => r.type === "replacement").length} color="#1d4ed8" border="#bfdbfe" />
+        <StatCard label="โควต้าพื้นฐาน"  value={REQUESTS.filter(r => r.type === "quota").length}       color="#15803d" border="#86efac" />
+        <StatCard label="กรณีพิเศษ"       value={REQUESTS.filter(r => r.type === "special").length}     color="#6d28d9" border="#c4b5fd" />
+        <StatCard label="รออนุมัติ"       value={counts.pending} color={C.warning} border="#fcd34d" />
       </div>
 
       {/* Filters */}
@@ -145,72 +130,63 @@ export default function AllRequests({ onNavigate }: { onNavigate: (p: Page) => v
       </div>
 
       {/* Table */}
-      {mode === "mid" ? (
-        <MidFiTable
-          rows={8}
-          cols={11}
-          headers={["เลขที่คำขอ","ประเภทคำขอ","หน่วยงาน","ปีงบ","จำนวนรถ","งบประมาณรวม","ขั้นตอนปัจจุบัน","ผู้รับผิดชอบ","สถานะ","วันที่สร้าง",""]}
-          showHeaders={true}
-        />
-      ) : (
-        <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
-          <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr style={{ background: C.bg }}>
-                {["เลขที่คำขอ","ประเภทคำขอ","หน่วยงาน","ปีงบ","จำนวนรถ","งบประมาณรวม","ขั้นตอนปัจจุบัน","ผู้รับผิดชอบ","สถานะ","วันที่สร้าง",""].map(h => (
-                  <th key={h} className="px-3 py-3 text-left font-semibold"
-                    style={{ color: C.sub, borderBottom: `1px solid ${C.border}`, whiteSpace: "nowrap" }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((r, i) => {
-                const tc = TYPE_CFG[r.type];
-                const sc = STATUS_CFG[r.status];
-                return (
-                  <tr key={r.id} style={{ background: i % 2 === 0 ? C.surface : C.bg, borderBottom: `1px solid ${C.border}` }}>
-                    <td className="px-3 py-3 font-mono font-semibold" style={{ color: C.primary }}>{r.id}</td>
-                    <td className="px-3 py-3">
-                      <span className="px-2 py-0.5 rounded-full text-[11px] font-medium"
-                        style={{ background: tc.bg, color: tc.text, border: `1px solid ${tc.border}` }}>
-                        {tc.label}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3" style={{ color: C.text, maxWidth: 160 }}><span className="leading-snug block">{r.unit}</span></td>
-                    <td className="px-3 py-3 text-center" style={{ color: C.sub }}>{r.fiscalYear}</td>
-                    <td className="px-3 py-3 text-center font-semibold" style={{ color: C.text }}>{r.vehicles}</td>
-                    <td className="px-3 py-3 text-right font-semibold" style={{ color: C.text }}>
-                      {r.budget.toLocaleString()} ฿
-                    </td>
-                    <td className="px-3 py-3" style={{ color: C.sub, maxWidth: 160 }}><span className="leading-snug block">{r.currentStep}</span></td>
-                    <td className="px-3 py-3" style={{ color: C.sub }}>{r.owner}</td>
-                    <td className="px-3 py-3">
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
-                        style={{ background: sc.bg, color: sc.text }}>
-                        {sc.icon} {sc.label}
-                      </span>
-                    </td>
-                    <td className="px-3 py-3 whitespace-nowrap" style={{ color: C.muted }}>{r.createdAt}</td>
-                    <td className="px-3 py-3">
-                      <button onClick={() => onNavigate("request-detail")}
-                        className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-lg"
-                        style={{ background: C.bg, color: C.primary, border: `1px solid ${C.border}` }}>
-                        ดู <ChevronRight size={11} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-          {filtered.length === 0 && (
-            <div className="flex flex-col items-center gap-2 py-12">
-              <FileText size={32} color={C.muted} />
-              <p className="text-sm" style={{ color: C.muted }}>ไม่พบรายการที่ตรงกับเงื่อนไข</p>
-            </div>
-          )}
-        </div>
-      )}
+      <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
+        <table className="w-full text-xs border-collapse">
+          <thead>
+            <tr style={{ background: C.bg }}>
+              {["เลขที่คำขอ","ประเภทคำขอ","หน่วยงาน","ปีงบ","จำนวนรถ","งบประมาณรวม","ขั้นตอนปัจจุบัน","ผู้รับผิดชอบ","สถานะ","วันที่สร้าง",""].map(h => (
+                <th key={h} className="px-3 py-3 text-left font-semibold"
+                  style={{ color: C.sub, borderBottom: `1px solid ${C.border}`, whiteSpace: "nowrap" }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((r, i) => {
+              const tc = TYPE_CFG[r.type];
+              const sc = STATUS_CFG[r.status];
+              return (
+                <tr key={r.id} style={{ background: i % 2 === 0 ? C.surface : C.bg, borderBottom: `1px solid ${C.border}` }}>
+                  <td className="px-3 py-3 font-mono font-semibold" style={{ color: C.primary }}>{r.id}</td>
+                  <td className="px-3 py-3">
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-medium"
+                      style={{ background: tc.bg, color: tc.text, border: `1px solid ${tc.border}` }}>
+                      {tc.label}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3" style={{ color: C.text, maxWidth: 160 }}><span className="leading-snug block">{r.unit}</span></td>
+                  <td className="px-3 py-3 text-center" style={{ color: C.sub }}>{r.fiscalYear}</td>
+                  <td className="px-3 py-3 text-center font-semibold" style={{ color: C.text }}>{r.vehicles}</td>
+                  <td className="px-3 py-3 text-right font-semibold" style={{ color: C.text }}>
+                    {r.budget.toLocaleString()} ฿
+                  </td>
+                  <td className="px-3 py-3" style={{ color: C.sub, maxWidth: 160 }}><span className="leading-snug block">{r.currentStep}</span></td>
+                  <td className="px-3 py-3" style={{ color: C.sub }}>{r.owner}</td>
+                  <td className="px-3 py-3">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
+                      style={{ background: sc.bg, color: sc.text }}>
+                      {sc.icon} {sc.label}
+                    </span>
+                  </td>
+                  <td className="px-3 py-3 whitespace-nowrap" style={{ color: C.muted }}>{r.createdAt}</td>
+                  <td className="px-3 py-3">
+                    <button onClick={() => onNavigate("request-detail")}
+                      className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-lg"
+                      style={{ background: C.bg, color: C.primary, border: `1px solid ${C.border}` }}>
+                      ดู <ChevronRight size={11} />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {filtered.length === 0 && (
+          <div className="flex flex-col items-center gap-2 py-12">
+            <FileText size={32} color={C.muted} />
+            <p className="text-sm" style={{ color: C.muted }}>ไม่พบรายการที่ตรงกับเงื่อนไข</p>
+          </div>
+        )}
+      </div>
 
       {/* Summary footer */}
       <div className="flex items-center gap-8 px-5 py-3.5 rounded-xl"

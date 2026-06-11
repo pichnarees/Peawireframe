@@ -2,8 +2,6 @@ import { useState } from "react";
 import { ChevronRight, ChevronLeft, Check, Plus, Trash2, Upload, FileText, Info } from "lucide-react";
 import type { Page } from "../components/Sidebar";
 import type { RequestType } from "../App";
-import MidFiPlaceholder, { MidFiStatCard, MidFiInput } from "../components/MidFiPlaceholder";
-import { useFidelity } from "../contexts/FidelityContext";
 
 const G = {
   primary: "#334155", border: "#e2e8f0", bg: "#f8fafc", surface: "#ffffff",
@@ -38,12 +36,6 @@ const UNITS = ["คัน", "คู่"];
 const PROCUREMENT_METHODS = ["E-Bidding", "ตกลงราคา", "วิธีคัดเลือก", "วิธีเฉพาะเจาะจง"];
 
 function StepIndicator({ step }: { step: number }) {
-  const { mode } = useFidelity();
-
-  if (mode === "mid") {
-    return <MidFiPlaceholder height={60} className="mb-6" />;
-  }
-
   return (
     <div className="flex items-center gap-0">
       {STEPS.map((s, i) => {
@@ -77,36 +69,9 @@ function StepIndicator({ step }: { step: number }) {
 }
 
 function Step1({ requestType }: { requestType: RequestType }) {
-  const { mode } = useFidelity();
   const typeLabel = requestType === "replacement" ? "จัดซื้อทดแทนรถเดิม"
     : requestType === "quota" ? "จัดซื้อเพิ่มเติมตามโควต้าพื้นฐาน"
     : "จัดซื้อเพิ่มเติมกรณีพิเศษ";
-
-  if (mode === "mid") {
-    return (
-      <div className="flex flex-col gap-6">
-        <div className="grid grid-cols-2 gap-5">
-          {[
-            "ชื่อแผน / คำขอ",
-            "ประเภทคำขอ",
-            "ปีงบประมาณ",
-            "หน่วยงานผู้ขอ",
-            "วิธีการจัดซื้อ",
-            "ผู้รับผิดชอบ"
-          ].map(label => (
-            <div key={label} className="flex flex-col gap-2">
-              <label className="text-xs font-semibold" style={{ color: "#6b7280" }}>{label}</label>
-              <MidFiInput placeholder="..." />
-            </div>
-          ))}
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold" style={{ color: "#6b7280" }}>หมายเหตุ</label>
-          <MidFiPlaceholder height={80} />
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -157,43 +122,6 @@ function Step1({ requestType }: { requestType: RequestType }) {
 }
 
 function Step2({ requestType }: { requestType: RequestType }) {
-  const { mode } = useFidelity();
-
-  if (mode === "mid") {
-    return (
-      <div className="flex flex-col gap-5">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg border"
-          style={{ background: "#f3f4f6", borderColor: "#d1d5db" }}>
-          <Info size={13} color="#6b7280" />
-          <span className="text-xs" style={{ color: "#6b7280" }}>
-            ข้อมูลความต้องการจากหน้า Source Data ถูกโหลดแล้ว
-          </span>
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          {requestType === "replacement" && [
-            ["รถที่เลือกทดแทน", "18 คัน"],
-            ["อายุเฉลี่ย", "13.2 ปี"],
-            ["ระยะทางเฉลี่ย", "318,500 กม."]
-          ].map(([l, v]) => <MidFiStatCard key={l} label={l} value={v} />)}
-          {requestType === "quota" && [
-            ["โควต้าตามเกณฑ์", "142 คัน"],
-            ["รถที่มีอยู่จริง", "128 คัน"],
-            ["ช่องว่าง (Gap)", "14 คัน"]
-          ].map(([l, v]) => <MidFiStatCard key={l} label={l} value={v} />)}
-          {requestType === "special" && [
-            ["คำขอพิเศษทั้งหมด", "6 รายการ"],
-            ["ผ่านเกณฑ์", "6 รายการ"],
-            ["รถที่ต้องจัดหา", "9 คัน"]
-          ].map(([l, v]) => <MidFiStatCard key={l} label={l} value={v} />)}
-        </div>
-        <div className="flex flex-col gap-2">
-          <label className="text-xs font-semibold" style={{ color: "#6b7280" }}>เหตุผลความจำเป็น</label>
-          <MidFiPlaceholder height={100} />
-        </div>
-      </div>
-    );
-  }
-
   if (requestType === "replacement") {
     return (
       <div className="flex flex-col gap-5">

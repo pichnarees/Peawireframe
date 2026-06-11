@@ -2,8 +2,6 @@ import { useState } from "react";
 import { CheckCircle2, AlertTriangle, FileText, ChevronRight, RefreshCw, TrendingUp, Star, Check, X } from "lucide-react";
 import type { Page } from "../components/Sidebar";
 import type { RequestType } from "../App";
-import MidFiPlaceholder, { MidFiStatCard, MidFiTable } from "../components/MidFiPlaceholder";
-import { useFidelity } from "../contexts/FidelityContext";
 
 const C = {
   primary: "#334155", border: "#e2e8f0", bg: "#f8fafc", surface: "#ffffff",
@@ -57,7 +55,6 @@ function TypeBadge({ type }: { type: RequestType }) {
 
 /* ── Replacement view ── */
 function ReplacementView({ onConfirm }: { onConfirm: () => void }) {
-  const { mode } = useFidelity();
   const [selected, setSelected] = useState<Set<string>>(new Set());
 
   function toggle(reg: string) {
@@ -66,33 +63,15 @@ function ReplacementView({ onConfirm }: { onConfirm: () => void }) {
 
   return (
     <div className="flex flex-col gap-5">
-      {mode === "mid" ? (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg self-start border"
-          style={{ background: "#f3f4f6", borderColor: "#d1d5db" }}>
-          <RefreshCw size={13} color="#6b7280" />
-          <span className="text-xs font-semibold" style={{ color: "#6b7280" }}>
-            ระบบ VMS ตรวจพบรถที่เข้าเกณฑ์ทดแทน {REPLACEMENT_VEHICLES.length} คัน
-          </span>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg self-start"
-          style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
-          <RefreshCw size={13} color="#1d4ed8" />
-          <span className="text-xs font-semibold" style={{ color: "#1d4ed8" }}>
-            ระบบ VMS ตรวจพบรถที่เข้าเกณฑ์ทดแทน {REPLACEMENT_VEHICLES.length} คัน
-          </span>
-        </div>
-      )}
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg self-start"
+        style={{ background: "#eff6ff", border: "1px solid #bfdbfe" }}>
+        <RefreshCw size={13} color="#1d4ed8" />
+        <span className="text-xs font-semibold" style={{ color: "#1d4ed8" }}>
+          ระบบ VMS ตรวจพบรถที่เข้าเกณฑ์ทดแทน {REPLACEMENT_VEHICLES.length} คัน
+        </span>
+      </div>
 
-      {mode === "mid" ? (
-        <MidFiTable
-          rows={5}
-          cols={9}
-          headers={["","ทะเบียน","ประเภทรถ","หน่วยงาน","อายุ","ระยะทาง","ค่าซ่อม%","สภาพ","เหตุผลที่เข้าเกณฑ์"]}
-          showHeaders={true}
-        />
-      ) : (
-        <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
+      <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
         <table className="w-full text-xs border-collapse">
           <thead>
             <tr style={{ background: C.bg }}>
@@ -138,27 +117,16 @@ function ReplacementView({ onConfirm }: { onConfirm: () => void }) {
           </tbody>
         </table>
       </div>
-      )}
 
       <div className="flex items-center gap-4 px-4 py-3 rounded-xl" style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-        {mode === "mid" ? (
-          <>
-            <span className="text-xs" style={{ color: "#9ca3af" }}>Placeholder text</span>
-            <div className="flex-1" />
-            <MidFiPlaceholder height={36} width={250} />
-          </>
-        ) : (
-          <>
-            <span className="text-xs" style={{ color: C.muted }}>เลือกแล้ว {selected.size} / {REPLACEMENT_VEHICLES.length} คัน</span>
-            <div className="flex-1" />
-            <button disabled={selected.size === 0} onClick={onConfirm}
-              className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold"
-              style={{ background: selected.size > 0 ? C.primary : C.bg, color: selected.size > 0 ? "#fff" : C.muted,
-                cursor: selected.size > 0 ? "pointer" : "not-allowed" }}>
-              ดำเนินการต่อ → วิเคราะห์ความต้องการ <ChevronRight size={15} />
-            </button>
-          </>
-        )}
+        <span className="text-xs" style={{ color: C.muted }}>เลือกแล้ว {selected.size} / {REPLACEMENT_VEHICLES.length} คัน</span>
+        <div className="flex-1" />
+        <button disabled={selected.size === 0} onClick={onConfirm}
+          className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold"
+          style={{ background: selected.size > 0 ? C.primary : C.bg, color: selected.size > 0 ? "#fff" : C.muted,
+            cursor: selected.size > 0 ? "pointer" : "not-allowed" }}>
+          ดำเนินการต่อ → วิเคราะห์ความต้องการ <ChevronRight size={15} />
+        </button>
       </div>
     </div>
   );
@@ -166,42 +134,25 @@ function ReplacementView({ onConfirm }: { onConfirm: () => void }) {
 
 /* ── Quota view ── */
 function QuotaView({ onConfirm }: { onConfirm: () => void }) {
-  const { mode } = useFidelity();
   const totalShortage = QUOTA_DATA.reduce((s, r) => s + r.shortage, 0);
   return (
     <div className="flex flex-col gap-5">
       <div className="grid grid-cols-3 gap-4">
-        {mode === "mid" ? (
-          <>
-            <MidFiStatCard label="โควต้ารวม" value={`${QUOTA_DATA.reduce((s,r) => s+r.quota,0)} คัน`} />
-            <MidFiStatCard label="มีอยู่จริง" value={`${QUOTA_DATA.reduce((s,r) => s+r.actual,0)} คัน`} />
-            <MidFiStatCard label="ขาดอยู่" value={`${totalShortage} คัน`} />
-          </>
-        ) : (
-          [
-            { label: "โควต้ารวม", value: QUOTA_DATA.reduce((s,r) => s+r.quota,0), color: C.text },
-            { label: "มีอยู่จริง", value: QUOTA_DATA.reduce((s,r) => s+r.actual,0), color: C.success },
-            { label: "ขาดอยู่", value: totalShortage, color: C.danger },
-          ].map(c => (
-            <div key={c.label} className="flex flex-col gap-1 px-4 py-3.5 rounded-xl"
-              style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-              <p className="text-xs" style={{ color: C.muted }}>{c.label}</p>
-              <p className="text-2xl font-bold" style={{ color: c.color }}>{c.value}</p>
-              <p className="text-xs" style={{ color: C.muted }}>คัน</p>
-            </div>
-          ))
-        )}
+        {[
+          { label: "โควต้ารวม", value: QUOTA_DATA.reduce((s,r) => s+r.quota,0), color: C.text },
+          { label: "มีอยู่จริง", value: QUOTA_DATA.reduce((s,r) => s+r.actual,0), color: C.success },
+          { label: "ขาดอยู่", value: totalShortage, color: C.danger },
+        ].map(c => (
+          <div key={c.label} className="flex flex-col gap-1 px-4 py-3.5 rounded-xl"
+            style={{ background: C.surface, border: `1px solid ${C.border}` }}>
+            <p className="text-xs" style={{ color: C.muted }}>{c.label}</p>
+            <p className="text-2xl font-bold" style={{ color: c.color }}>{c.value}</p>
+            <p className="text-xs" style={{ color: C.muted }}>คัน</p>
+          </div>
+        ))}
       </div>
 
-      {mode === "mid" ? (
-        <MidFiTable
-          rows={7}
-          cols={6}
-          headers={["หน่วยงาน","โควต้า (คัน)","มีอยู่ (คัน)","ขาด (คัน)","ภารกิจ","แหล่งข้อมูล"]}
-          showHeaders={true}
-        />
-      ) : (
-        <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
+      <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
         <table className="w-full text-xs border-collapse">
           <thead>
             <tr style={{ background: C.bg }}>
@@ -226,21 +177,12 @@ function QuotaView({ onConfirm }: { onConfirm: () => void }) {
           </tbody>
         </table>
       </div>
-      )}
 
       <div className="flex justify-end">
-        {mode === "mid" ? (
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border"
-            style={{ background: "#e5e7eb", color: "#6b7280", borderColor: "#9ca3af" }}
-            onClick={onConfirm}>
-            ดำเนินการต่อ → วิเคราะห์ Gap <ChevronRight size={15} />
-          </button>
-        ) : (
-          <button onClick={onConfirm} className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold"
-            style={{ background: C.primary, color: "#fff" }}>
-            ดำเนินการต่อ → วิเคราะห์ Gap <ChevronRight size={15} />
-          </button>
-        )}
+        <button onClick={onConfirm} className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold"
+          style={{ background: C.primary, color: "#fff" }}>
+          ดำเนินการต่อ → วิเคราะห์ Gap <ChevronRight size={15} />
+        </button>
       </div>
     </div>
   );
@@ -248,105 +190,75 @@ function QuotaView({ onConfirm }: { onConfirm: () => void }) {
 
 /* ── Special view ── */
 function SpecialView({ onConfirm }: { onConfirm: () => void }) {
-  const { mode } = useFidelity();
   const [checked, setChecked] = useState<Set<string>>(new Set());
   function toggle(id: string) { setChecked(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; }); }
 
   return (
     <div className="flex flex-col gap-5">
-      {mode === "mid" ? (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg self-start border"
-          style={{ background: "#f3f4f6", borderColor: "#d1d5db" }}>
-          <AlertTriangle size={13} color="#6b7280" />
-          <span className="text-xs font-semibold" style={{ color: "#6b7280" }}>
-            รายการคำขอพิเศษที่รวบรวมจาก VMS — ต้องตรวจสอบหลักฐานก่อนดำเนินการต่อ
-          </span>
-        </div>
-      ) : (
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg self-start"
-          style={{ background: "#faf5ff", border: "1px solid #c4b5fd" }}>
-          <AlertTriangle size={13} color="#7c3aed" />
-          <span className="text-xs font-semibold" style={{ color: "#6d28d9" }}>
-            รายการคำขอพิเศษที่รวบรวมจาก VMS — ต้องตรวจสอบหลักฐานก่อนดำเนินการต่อ
-          </span>
-        </div>
-      )}
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg self-start"
+        style={{ background: "#faf5ff", border: "1px solid #c4b5fd" }}>
+        <AlertTriangle size={13} color="#7c3aed" />
+        <span className="text-xs font-semibold" style={{ color: "#6d28d9" }}>
+          รายการคำขอพิเศษที่รวบรวมจาก VMS — ต้องตรวจสอบหลักฐานก่อนดำเนินการต่อ
+        </span>
+      </div>
 
-      {mode === "mid" ? (
-        <MidFiTable
-          rows={5}
-          cols={9}
-          headers={["","เลขที่","หน่วยงาน","ประเภทกรณีพิเศษ","ประเภทรถ","จำนวน","เหตุผล","แหล่งข้อมูล","เอกสาร"]}
-          showHeaders={true}
-        />
-      ) : (
-        <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
-          <table className="w-full text-xs border-collapse">
-            <thead>
-              <tr style={{ background: C.bg }}>
-                {["","เลขที่","หน่วยงาน","ประเภทกรณีพิเศษ","ประเภทรถ","จำนวน","เหตุผล","แหล่งข้อมูล","เอกสาร"].map(h => (
-                  <th key={h} className="px-3 py-3 text-left font-semibold"
-                    style={{ color: C.sub, borderBottom: `1px solid ${C.border}` }}>{h}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {SPECIAL_REQS.map((r, i) => {
-                const sel = checked.has(r.id);
-                return (
-                  <tr key={r.id} onClick={() => toggle(r.id)} style={{
-                    background: sel ? "#faf5ff" : i % 2 === 0 ? C.surface : C.bg,
-                    borderBottom: `1px solid ${C.border}`, cursor: "pointer",
-                    borderLeft: `3px solid ${sel ? "#7c3aed" : "transparent"}`,
-                  }}>
-                    <td className="px-3 py-3">
-                      <div className="w-4 h-4 rounded flex items-center justify-center"
-                        style={{ background: sel ? "#7c3aed" : "#fff", border: `2px solid ${sel ? "#7c3aed" : C.border}` }}>
-                        {sel && <Check size={9} strokeWidth={3.5} color="#fff" />}
-                      </div>
-                    </td>
-                    <td className="px-3 py-3 font-mono font-semibold" style={{ color: "#6d28d9" }}>{r.id}</td>
-                    <td className="px-3 py-3" style={{ color: C.text }}>{r.dept}</td>
-                    <td className="px-3 py-3">
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold"
-                        style={{ background: "#faf5ff", color: "#6d28d9", border: "1px solid #c4b5fd" }}>{r.specialType}</span>
-                    </td>
-                    <td className="px-3 py-3" style={{ color: C.text }}>{r.type}</td>
-                    <td className="px-3 py-3 text-center font-bold" style={{ color: C.text }}>{r.qty}</td>
-                    <td className="px-3 py-3" style={{ color: C.sub, maxWidth: 160 }}><span className="block leading-snug">{r.reason}</span></td>
-                    <td className="px-3 py-3" style={{ color: C.muted }}>{r.source}</td>
-                    <td className="px-3 py-3">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "#f0fdf4", color: "#15803d" }}>
-                        {r.docs} ไฟล์
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div className="rounded-xl overflow-hidden" style={{ border: `1px solid ${C.border}` }}>
+        <table className="w-full text-xs border-collapse">
+          <thead>
+            <tr style={{ background: C.bg }}>
+              {["","เลขที่","หน่วยงาน","ประเภทกรณีพิเศษ","ประเภทรถ","จำนวน","เหตุผล","แหล่งข้อมูล","เอกสาร"].map(h => (
+                <th key={h} className="px-3 py-3 text-left font-semibold"
+                  style={{ color: C.sub, borderBottom: `1px solid ${C.border}` }}>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {SPECIAL_REQS.map((r, i) => {
+              const sel = checked.has(r.id);
+              return (
+                <tr key={r.id} onClick={() => toggle(r.id)} style={{
+                  background: sel ? "#faf5ff" : i % 2 === 0 ? C.surface : C.bg,
+                  borderBottom: `1px solid ${C.border}`, cursor: "pointer",
+                  borderLeft: `3px solid ${sel ? "#7c3aed" : "transparent"}`,
+                }}>
+                  <td className="px-3 py-3">
+                    <div className="w-4 h-4 rounded flex items-center justify-center"
+                      style={{ background: sel ? "#7c3aed" : "#fff", border: `2px solid ${sel ? "#7c3aed" : C.border}` }}>
+                      {sel && <Check size={9} strokeWidth={3.5} color="#fff" />}
+                    </div>
+                  </td>
+                  <td className="px-3 py-3 font-mono font-semibold" style={{ color: "#6d28d9" }}>{r.id}</td>
+                  <td className="px-3 py-3" style={{ color: C.text }}>{r.dept}</td>
+                  <td className="px-3 py-3">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold"
+                      style={{ background: "#faf5ff", color: "#6d28d9", border: "1px solid #c4b5fd" }}>{r.specialType}</span>
+                  </td>
+                  <td className="px-3 py-3" style={{ color: C.text }}>{r.type}</td>
+                  <td className="px-3 py-3 text-center font-bold" style={{ color: C.text }}>{r.qty}</td>
+                  <td className="px-3 py-3" style={{ color: C.sub, maxWidth: 160 }}><span className="block leading-snug">{r.reason}</span></td>
+                  <td className="px-3 py-3" style={{ color: C.muted }}>{r.source}</td>
+                  <td className="px-3 py-3">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "#f0fdf4", color: "#15803d" }}>
+                      {r.docs} ไฟล์
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
 
       <div className="flex items-center gap-4 px-4 py-3 rounded-xl" style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-        {mode === "mid" ? (
-          <>
-            <span className="text-xs" style={{ color: "#9ca3af" }}>Placeholder text</span>
-            <div className="flex-1" />
-            <MidFiPlaceholder height={36} width={250} />
-          </>
-        ) : (
-          <>
-            <span className="text-xs" style={{ color: C.muted }}>เลือกแล้ว {checked.size} / {SPECIAL_REQS.length} รายการ</span>
-            <div className="flex-1" />
-            <button disabled={checked.size === 0} onClick={onConfirm}
-              className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold"
-              style={{ background: checked.size > 0 ? C.primary : C.bg, color: checked.size > 0 ? "#fff" : C.muted,
-                cursor: checked.size > 0 ? "pointer" : "not-allowed" }}>
-              ดำเนินการต่อ → กำหนดเกณฑ์และวิเคราะห์ <ChevronRight size={15} />
-            </button>
-          </>
-        )}
+        <span className="text-xs" style={{ color: C.muted }}>เลือกแล้ว {checked.size} / {SPECIAL_REQS.length} รายการ</span>
+        <div className="flex-1" />
+        <button disabled={checked.size === 0} onClick={onConfirm}
+          className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold"
+          style={{ background: checked.size > 0 ? C.primary : C.bg, color: checked.size > 0 ? "#fff" : C.muted,
+            cursor: checked.size > 0 ? "pointer" : "not-allowed" }}>
+          ดำเนินการต่อ → กำหนดเกณฑ์และวิเคราะห์ <ChevronRight size={15} />
+        </button>
       </div>
     </div>
   );

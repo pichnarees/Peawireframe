@@ -1,6 +1,5 @@
 import { useState } from "react";
 export type RequestType = "replacement" | "quota" | "special" | null;
-import { FidelityProvider } from "./contexts/FidelityContext";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import ScenarioNav from "./components/ScenarioNav";
@@ -88,21 +87,19 @@ export default function App() {
   }
 
   return (
-    <FidelityProvider>
-      <div
-        className="h-screen flex overflow-hidden"
-        style={{ fontFamily: "'IBM Plex Sans Thai', sans-serif", filter: "grayscale(1)" }}
-      >
-        <Sidebar activePage={page} onNavigate={setPage} />
-        <ScenarioNav activePage={page} onNavigate={setPage} />
+    <div
+      className="h-screen flex overflow-hidden"
+      style={{ fontFamily: "'IBM Plex Sans Thai', sans-serif", filter: "grayscale(1)" }}
+    >
+      <Sidebar activePage={page} onNavigate={setPage} />
+      <ScenarioNav activePage={page} onNavigate={setPage} />
 
-        <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-          <Header title={meta.title} description={meta.description} page={page} onNavigate={setPage} />
-          <main className="flex-1 overflow-y-auto" style={{ background: "#ffffff" }}>
-            {renderPage()}
-          </main>
-        </div>
+      <div className="flex-1 flex flex-col overflow-hidden min-w-0">
+        <Header title={meta.title} description={meta.description} page={page} onNavigate={setPage} />
+        <main className="flex-1 overflow-y-auto" style={{ background: "#ffffff" }}>
+          {renderPage()}
+        </main>
       </div>
-    </FidelityProvider>
+    </div>
   );
 }

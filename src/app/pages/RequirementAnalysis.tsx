@@ -2,8 +2,6 @@ import { useState } from "react";
 import { RefreshCw, TrendingUp, Star, ChevronRight, CheckCircle2, Calculator, Info, RotateCcw, Check, ChevronDown, ChevronUp, FileText } from "lucide-react";
 import type { Page } from "../components/Sidebar";
 import type { RequestType } from "../App";
-import MidFiPlaceholder, { MidFiStatCard, MidFiTable } from "../components/MidFiPlaceholder";
-import { useFidelity } from "../contexts/FidelityContext";
 
 const C = {
   primary: "#334155", border: "#e2e8f0", bg: "#f8fafc", surface: "#ffffff",
@@ -13,7 +11,6 @@ const C = {
 
 /* ── Replacement analysis ── */
 function ReplacementAnalysis({ onConfirm }: { onConfirm: () => void }) {
-  const { mode } = useFidelity();
   const [confirmed, setConfirmed] = useState(false);
   const data = [
     { reg: "กข-1234 น.ปท.", type: "รถกระบะ 4WD",           dept: "กองยานพาหนะ", age: 12, km: 298450, repair: 62, propose: "ทดแทนด้วยรถกระบะ 4WD รุ่นใหม่" },
@@ -21,39 +18,6 @@ function ReplacementAnalysis({ onConfirm }: { onConfirm: () => void }) {
     { reg: "คง-9012 น.ปท.", type: "รถยนต์นั่งส่วนกลาง",     dept: "กฟภ. เขต 2",   age: 9,  km: 215800, repair: 53, propose: "ทดแทนด้วยรถยนต์นั่งทั่วไป" },
     { reg: "งจ-3456 น.ปท.", type: "รถบรรทุกเล็ก 1 ตัน",     dept: "กองพัสดุ",     age: 13, km: 412300, repair: 71, propose: "ทดแทนด้วยรถบรรทุก 1 ตัน" },
   ];
-
-  if (mode === "mid") {
-    return (
-      <div className="flex flex-col gap-5">
-        <div className="grid grid-cols-3 gap-4">
-          <MidFiStatCard label="รถที่เข้าเกณฑ์ทดแทน" value={data.length} />
-          <MidFiStatCard label="เสนอจัดซื้อทดแทน" value={data.length} />
-          <MidFiStatCard label="ประมาณการงบประมาณ" value="14.4M บาท" />
-        </div>
-        <MidFiTable
-          rows={4}
-          cols={7}
-          headers={["ทะเบียน","ประเภทรถ","หน่วยงาน","อายุ","ระยะทาง","ค่าซ่อม%","ข้อเสนอการทดแทน"]}
-          showHeaders={true}
-        />
-        <div className="flex items-center gap-3 px-4 py-3 rounded-xl" style={{ background: C.surface, border: `1px solid ${C.border}` }}>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="confirm-mid" checked={confirmed} onChange={() => setConfirmed(!confirmed)} />
-            <label htmlFor="confirm-mid" className="text-xs" style={{ color: "#6b7280" }}>
-              ยืนยันข้อมูลถูกต้อง
-            </label>
-          </div>
-          <div className="flex-1" />
-          <button className="flex items-center gap-2 px-5 py-2 rounded-lg text-sm font-semibold border"
-            style={{ background: "#e5e7eb", color: "#6b7280", borderColor: "#9ca3af" }}
-            onClick={onConfirm}>
-            ดำเนินการต่อ <ChevronRight size={15} />
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col gap-5">
       <div className="grid grid-cols-3 gap-4">

@@ -2,8 +2,6 @@ import { useState } from "react";
 import { RefreshCw, TrendingUp, Star, ChevronRight, CheckCircle2, Info } from "lucide-react";
 import type { Page } from "../components/Sidebar";
 import type { RequestType } from "../App";
-import MidFiPlaceholder from "../components/MidFiPlaceholder";
-import { useFidelity } from "../contexts/FidelityContext";
 
 const C = {
   primary: "#334155", border: "#e2e8f0", bg: "#f8fafc", surface: "#ffffff",
@@ -78,61 +76,12 @@ const OPTIONS: TypeOption[] = [
 export default function CreateRequest({
   onNavigate, onSetType,
 }: { onNavigate: (p: Page) => void; onSetType: (t: RequestType) => void }) {
-  const { mode } = useFidelity();
   const [selected, setSelected] = useState<RequestType>(null);
 
   function handleStart() {
     if (!selected) return;
     onSetType(selected);
     onNavigate("source-data");
-  }
-
-  if (mode === "mid") {
-    return (
-      <div className="flex flex-col gap-8 p-8 max-w-5xl">
-        <div className="flex flex-col gap-2">
-          <p className="text-sm" style={{ color: "#6b7280" }}>
-            เลือกประเภทคำขอที่ตรงกับสถานการณ์ของหน่วยงาน ระบบจะปรับขั้นตอน ฟอร์ม และเส้นทางอนุมัติให้เหมาะสม
-          </p>
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg border"
-            style={{ background: "#fef3c7", borderColor: "#fcd34d" }}>
-            <Info size={13} color="#92400e" />
-            <span className="text-xs" style={{ color: "#92400e" }}>
-              ทุก 3 ประเภทใช้หน้าจอร่วมกัน — ต่างกันที่ข้อมูลที่ต้องกรอก เกณฑ์การพิจารณา และผู้อนุมัติ
-            </span>
-          </div>
-        </div>
-        <div className="grid grid-cols-3 gap-5">
-          {OPTIONS.map(opt => (
-            <div key={opt.type}
-              className="flex flex-col gap-4 p-5 rounded-2xl border"
-              style={{ background: "#f9fafb", borderColor: "#d1d5db" }}>
-              <div className="flex items-start justify-between">
-                <div className="p-2.5 rounded-xl" style={{ background: "#e5e7eb", color: "#6b7280" }}>
-                  {opt.icon}
-                </div>
-                <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
-                  style={{ background: "#e5e7eb", color: "#6b7280", border: "1px solid #9ca3af" }}>
-                  {opt.badge}
-                </span>
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <p className="text-base font-bold" style={{ color: "#4b5563" }}>{opt.label}</p>
-                <p className="text-xs leading-relaxed" style={{ color: "#6b7280" }}>{opt.description}</p>
-              </div>
-              <MidFiPlaceholder height={120} />
-            </div>
-          ))}
-        </div>
-        <div className="flex justify-end">
-          <button className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold border"
-            style={{ background: "#e5e7eb", color: "#6b7280", borderColor: "#9ca3af" }}
-            onClick={handleStart}>
-            เริ่มต้นสร้างคำขอ <ChevronRight size={16} />
-          </button>
-        </div>
-      </div>
-    );
   }
 
   return (
